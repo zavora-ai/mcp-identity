@@ -1,0 +1,67 @@
+server_id = "mcp_identity"
+display_name = "Identity & Access"
+version = "1.1.0"
+domain = "security"
+sdk_version = "0.1.0"
+risk_level = "high"
+writes_allowed = "gated"
+transports = ["stdio"]
+credentials = ["vault://idp-api-key"]
+governance_gates = ["security_review"]
+environments = ["development", "staging", "production"]
+
+[[tools]]
+name = "lookup_user"
+description = "Look up a user by email, username, full name, or employee ID"
+risk_class = "read_only"
+requires_approval = false
+credential_bindings = ["vault://idp-api-key"]
+
+[[tools]]
+name = "list_user_groups"
+description = "List groups/roles a user belongs to"
+risk_class = "read_only"
+requires_approval = false
+credential_bindings = ["vault://idp-api-key"]
+
+[[tools]]
+name = "check_mfa"
+description = "Check MFA enrollment status, methods, and last verification"
+risk_class = "read_only"
+requires_approval = false
+credential_bindings = ["vault://idp-api-key"]
+
+[[tools]]
+name = "verify_user"
+description = "Verify user exists and is active"
+risk_class = "read_only"
+requires_approval = false
+credential_bindings = ["vault://idp-api-key"]
+
+[[tools]]
+name = "list_entitlements"
+description = "List all entitlements for a user with source, grant type, risk level"
+risk_class = "read_only"
+requires_approval = false
+credential_bindings = ["vault://idp-api-key"]
+
+[[tools]]
+name = "request_access"
+description = "Request access grant or revoke — goes through approval workflow"
+risk_class = "internal_write"
+requires_approval = true
+credential_bindings = ["vault://idp-api-key"]
+
+[[tools]]
+name = "emergency_revoke"
+description = "Emergency access revocation — immediate effect, triggers post-action review"
+risk_class = "destructive"
+requires_approval = true
+credential_bindings = ["vault://idp-api-key"]
+
+[[tools]]
+name = "lifecycle_task"
+description = "Create onboarding/offboarding/transfer/role-change lifecycle task"
+risk_class = "internal_write"
+requires_approval = true
+credential_bindings = ["vault://idp-api-key"]

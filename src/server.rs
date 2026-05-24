@@ -1,3 +1,4 @@
+use adk_mcp_sdk::{HealthCheck, HealthStatus};
 use crate::store::IdentityStore;
 use crate::types::*;
 use rmcp::{handler::server::wrapper::Parameters, schemars, tool, tool_router};
@@ -151,5 +152,16 @@ impl IdentityServer {
             "task_id": task.id, "task_type": task.task_type, "status": task.status,
             "owner_team": task.owner_team, "steps": task.steps, "systems_impacted": task.systems_impacted,
         })).unwrap()
+    }
+}
+
+#[async_trait::async_trait]
+impl HealthCheck for IdentityServer {
+    async fn check_health(&self) -> HealthStatus {
+        HealthStatus {
+            healthy: true,
+            message: Some("operational".into()),
+            latency_ms: Some(1),
+        }
     }
 }
