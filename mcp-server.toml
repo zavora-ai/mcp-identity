@@ -1,67 +1,67 @@
 server_id = "mcp_identity"
-display_name = "Identity & Access"
+display_name = "Identity"
 version = "1.1.0"
 domain = "security"
-sdk_version = "0.1.0"
-risk_level = "high"
+sdk_version = "0.2.0"
+risk_level = "critical"
 writes_allowed = "gated"
 transports = ["stdio"]
 credentials = ["vault://idp-api-key"]
-governance_gates = ["security_review"]
+governance_gates = ["security_review", "mrtr_approval"]
 environments = ["development", "staging", "production"]
 
 [[tools]]
 name = "lookup_user"
-description = "Look up a user by email, username, full name, or employee ID"
+description = "Look up a user by email, username, full name, or employee ID. Returns matching users with minimized PII. Audit-logged."
 risk_class = "read_only"
 requires_approval = false
 credential_bindings = ["vault://idp-api-key"]
 
 [[tools]]
-name = "list_user_groups"
-description = "List groups/roles a user belongs to"
+name = "get_user_groups"
+description = "List groups/roles a user belongs to, including group type (security, app, role, distribution, dynamic). Audit-logged."
 risk_class = "read_only"
 requires_approval = false
-credential_bindings = ["vault://idp-api-key"]
+credential_bindings = []
 
 [[tools]]
-name = "check_mfa"
-description = "Check MFA enrollment status, methods, and last verification"
+name = "get_mfa_status"
+description = "Check MFA enrollment status, methods, and last verification. Returns safe metadata only (no device IDs or recovery codes). Security-sensitive read."
 risk_class = "read_only"
 requires_approval = false
-credential_bindings = ["vault://idp-api-key"]
+credential_bindings = []
 
 [[tools]]
-name = "verify_user"
-description = "Verify user exists and is active"
+name = "validate_identity"
+description = "Verify user exists and is active. Returns status, manager, department, MFA state, and risk level. Used by other tools to gate actions."
 risk_class = "read_only"
 requires_approval = false
-credential_bindings = ["vault://idp-api-key"]
+credential_bindings = []
 
 [[tools]]
 name = "list_entitlements"
-description = "List all entitlements for a user with source, grant type, risk level"
+description = "List all entitlements for a user with source, grant type, risk level, and expiration. High-sensitivity read."
 risk_class = "read_only"
 requires_approval = false
 credential_bindings = ["vault://idp-api-key"]
 
 [[tools]]
-name = "request_access"
-description = "Request access grant or revoke — goes through approval workflow"
-risk_class = "internal_write"
-requires_approval = true
-credential_bindings = ["vault://idp-api-key"]
+name = "request_access_change"
+description = "Request access grant or revoke. Goes through approval workflow. Requires reason, requester, and optional ticket linkage. Controlled write."
+risk_class = "read_only"
+requires_approval = false
+credential_bindings = []
 
 [[tools]]
-name = "emergency_revoke"
-description = "Emergency access revocation — immediate effect, triggers post-action review"
-risk_class = "destructive"
+name = "revoke_access"
+description = "Emergency access revocation. Immediate effect. Requires reason, requester, ticket, and triggers post-action review. Critical/break-glass write."
+risk_class = "identity_security_action"
 requires_approval = true
-credential_bindings = ["vault://idp-api-key"]
+credential_bindings = []
 
 [[tools]]
-name = "lifecycle_task"
-description = "Create onboarding/offboarding/transfer/role-change lifecycle task"
-risk_class = "internal_write"
+name = "create_user_lifecycle_task"
+description = "Create onboarding/offboarding/transfer/role-change lifecycle task with steps and impacted systems. Lifecycle-impacting write."
+risk_class = "identity_security_action"
 requires_approval = true
-credential_bindings = ["vault://idp-api-key"]
+credential_bindings = []
