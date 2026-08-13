@@ -87,7 +87,7 @@ pub struct IdentityServer {
     pub store: Arc<IdentityStore>,
 }
 
-#[tool_router(server_handler)]
+#[tool_router]
 impl IdentityServer {
     #[tool(description = "Look up a user by email, username, full name, or employee ID. Returns matching users with minimized PII. Audit-logged.")]
     fn lookup_user(&self, Parameters(i): Parameters<LookupUserInput>) -> String {
@@ -164,4 +164,11 @@ impl HealthCheck for IdentityServer {
             latency_ms: Some(1),
         }
     }
+}
+
+adk_mcp_sdk::mcp_2026_server! {
+    server: IdentityServer,
+    task_tools: ["create_user_lifecycle_task"],
+    approval_tools: ["revoke_access", "create_user_lifecycle_task"],
+    cache_ttl_ms: 60_000,
 }
