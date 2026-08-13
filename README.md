@@ -114,7 +114,7 @@ SEED_DATA=1 ./target/release/mcp-identity
 ```toml
 server_id = "mcp_identity"
 display_name = "Identity MCP"
-version = "1.0.0"
+version = "1.2.0"
 domain = "it_operations"
 risk_level = "high"
 writes_allowed = "gated"
